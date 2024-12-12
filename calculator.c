@@ -1,35 +1,62 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <ctype.h>
-#include <string.h>
-#include <math.h>
 
-#define MAX 100
 
-// Stack structure
+#define STACKLEN 100
+
+int error = 0, result;
+
+
 typedef struct {
-    int items[MAX];
+    int items[STACKLEN];
     int top;
 } Stack;
 
-void push(Stack *s, int value) {
-    if (s->top < MAX - 1) {
-        s->items[++(s->top)] = value;
-    } 
+int is_digit(int digit){
+
+    if(digit>=48 && digit<=57) return 1;
+
+    return 0;
+}
+
+int is_stack_full(Stack *s){
+
+    if (s->top < STACKLEN - 1) return 1;
+
     else {
-        printf("Invalid expression\n");
-        exit(1);
+        printf("Invalid expression2\n");
+        error = -1;
+        return 0;
     }
+
+
+}
+
+void push(Stack *s, int value) {
+    if (is_stack_full(s)) 
+        s->items[++(s->top)] = value;
+    
+    
+}
+
+int is_stack_empty(Stack *s){
+
+    if (s->top >= 0) return 1;
+
+    else {
+        printf("Invalid expression1\n");
+        error = -1;
+        return 0;
+    }
+
+
 }
 
 int pop(Stack *s) {
-    if (s->top >= 0) {
+    if (is_stack_empty(s)) 
         return s->items[(s->top)--];
-    } 
-    else {
-        printf("Invalid expression\n");
-        exit(1);
-    }
+     
+    
 }
 
 int peek(Stack *s) {
@@ -42,13 +69,12 @@ int precedence(char op) {
         case '-': return 1;
         case '*':
         case '/': return 2;
-        case '^': return 3;
         default: return 0;
     }
 }
 
 int is_operator(char c) {
-    return c == '+' || c == '-' || c == '*' || c == '/' || c == '^';
+    return c == '+' || c == '-' || c == '*' || c == '/' ;
 }
 
 void infix_to_postfix(const char *infix, char *postfix) {
@@ -59,9 +85,9 @@ void infix_to_postfix(const char *infix, char *postfix) {
         
         if (infix[i] == ' ') continue;
         
-        else if (isdigit(infix[i])) {
+        else if (is_digit(infix[i])) {
             
-            while (isdigit(infix[i])) {
+            while (is_digit(infix[i])) {
                 postfix[j++] = infix[i++];
             }
             postfix[j++] = ' '; 
@@ -79,7 +105,8 @@ void infix_to_postfix(const char *infix, char *postfix) {
         
         else{
             printf("Invalid expression");
-            exit(0);
+            error = -1;
+            break ;
             
         }
     }
@@ -94,14 +121,14 @@ void infix_to_postfix(const char *infix, char *postfix) {
 
 int evaluate_postfix(const char *postfix) {
     Stack stack = {.top = -1};
-    char buffer[MAX];
+    char buffer[STACKLEN];
     int i = 0;
 
     while (postfix[i]) {
-        if (isdigit(postfix[i])) {
+        if (is_digit(postfix[i])) {
             
             int k = 0;
-            while (isdigit(postfix[i])) {
+            while (is_digit(postfix[i])) {
                 buffer[k++] = postfix[i++];
             }
             buffer[k] = '\0';
@@ -113,7 +140,8 @@ int evaluate_postfix(const char *postfix) {
 
             if (postfix[i] == '/' && b == 0) {
                 printf("Division by zero.\n");
-                exit(1);
+                error = -1;
+                break ;
             }
 
             switch (postfix[i]) {
@@ -121,7 +149,7 @@ int evaluate_postfix(const char *postfix) {
                 case '-': push(&stack, a - b); break;
                 case '*': push(&stack, a * b); break;
                 case '/': push(&stack, a / b); break;
-                case '^': push(&stack, (int)pow(a, b)); break;
+                
             }
             i++;
         } 
@@ -130,19 +158,20 @@ int evaluate_postfix(const char *postfix) {
         }
     }
 
-    return pop(&stack);
+    if(error != -1) result = pop(&stack);
 }
 
 int main() {
-    char infix[MAX], postfix[MAX];
+    char infix[STACKLEN], postfix[STACKLEN];
+    int result;
     printf("Enter an equation : ");
     gets(infix); 
 
     infix_to_postfix(infix, postfix);
     
 
-    int result = evaluate_postfix(postfix);
-    printf("Result: %d\n", result);
+    if(error != -1) result = evaluate_postfix(postfix);
+    if(error != -1) printf("Result: %d\n", result);
 
     return 0;
 }

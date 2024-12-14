@@ -42,25 +42,6 @@ int main() {
     return 0;
 }
 
-int is_id_unique(int id) {
-    FILE *file = fopen(FILE_NAME, "r");
-    if (!file) {
-        
-        return 1;
-    }
-
-    Person record;
-    while (fscanf(file, "%d %[^\n] %d", &record.id, record.name, &record.age) != EOF) {
-        if (record.id == id) {
-            fclose(file);
-            return 0; 
-        }
-    }
-
-    fclose(file);
-    return 1; 
-}
-
 
 void createRecord() {
     FILE *file = fopen(FILE_NAME, "r+");

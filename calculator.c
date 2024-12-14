@@ -24,7 +24,7 @@ int is_stack_full(Stack *s){
     if (s->top < STACKLEN - 1) return 1;
 
     else {
-        printf("Invalid expression2\n");
+        printf("Invalid expression\n");
         error = -1;
         return 0;
     }
@@ -44,7 +44,7 @@ int is_stack_empty(Stack *s){
     if (s->top >= 0) return 1;
 
     else {
-        printf("Invalid expression1\n");
+        printf("Invalid expression\n");
         error = -1;
         return 0;
     }
